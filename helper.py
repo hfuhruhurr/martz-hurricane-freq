@@ -98,6 +98,4 @@ def make_chart(df):
     for text, label in zip(legend.get_texts(), region_labels_list):
         text.set_text(label)
 
-    plt.show()
-
-    return 27
+    return
