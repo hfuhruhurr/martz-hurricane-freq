@@ -12,12 +12,9 @@ The 9 `region`s:
 4. northernhemisphere
 5. northindian
 6. northwestpacific
-7. sourthernhemisphere
+7. southernhemisphere
 8. southindian
 9. southpacific
-
-
-
 
 
 ### Columns
@@ -27,11 +24,13 @@ From left to right, the columns are:
 * calendar year of the data
 * \# of named storms
 * \# of named storm days
-* \# of hurricanes
-* \# of hurricane days
+* \# of hurricanes/typhoons
+* \# of hurricane/typhoon days
 * \# of Cat 3+ hurricanes
 * \# of Cat 3+ hurricane days
 * accumulated cyclone energy
 
 The column names are deduced from the table at [the source url for the data](https://tropical.atmos.colostate.edu/Realtime/index.php?arch&loc=northatlantic).
+
+The use of "typhoon" instead of "hurricane" in `northwestpacific.json` surely must be an oversight.
 
