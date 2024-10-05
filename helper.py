@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import numpy as np
 
-region_labels = {
+basin_labels = {
     'northwestpacific': 'Northwest Pacific',
     'northeastpacific': 'Northeast Pacific',
     'northatlantic': 'North Atlantic',
@@ -12,7 +12,7 @@ region_labels = {
 }
 
 # from bottom to top, how Chris stacked his bars
-region_sort_order = [
+basin_sort_order = [
     'northwestpacific',
     'northeastpacific',
     'northatlantic',
@@ -22,7 +22,7 @@ region_sort_order = [
 ]
 
 # Discovered from Mac's builtin Digital Color Meter app which has a color picker
-region_colors = {
+basin_colors = {
     'northwestpacific': '#15027d',
     'northeastpacific': '#4677a3',
     'northatlantic': '#34aa9f',
@@ -35,8 +35,8 @@ def make_chart(df):
     # Set time window 
     years = [int(year) for year in df.columns[1:]] 
 
-    # region_hurricanes as dict {region: list of major_hurricane values}
-    region_hurricanes = {row[0]: list(row[1:]) for row in df.rows()}
+    # basin_hurricanes as dict {basin: list of major_hurricane values}
+    basin_hurricanes = {row[0]: list(row[1:]) for row in df.rows()}
 
     # Calculate # of stacks needed (one for each year)
     n_stacks = len(years)
@@ -48,16 +48,16 @@ def make_chart(df):
     fig, ax = plt.subplots(figsize=(6, 4.25))
 
     # Build the stack
-    for region in region_sort_order:
+    for basin in basin_sort_order:
         p = ax.bar(
             years,
-            region_hurricanes[region],
+            basin_hurricanes[basin],
             width=width,
-            label=region,
+            label=basin,
             bottom=stack_bottoms,
-            color=region_colors[region]
+            color=basin_colors[basin]
         )
-        stack_bottoms += region_hurricanes[region]
+        stack_bottoms += basin_hurricanes[basin]
 
     # Set min/max for x- and y-axis
     ax.set_xlim(1979, 2024)
@@ -93,9 +93,9 @@ def make_chart(df):
         handlelength=1.75
     )
 
-    # Rewrite the legend labels to human-ify the region
-    region_labels_list = list(region_labels.values())
-    for text, label in zip(legend.get_texts(), region_labels_list):
+    # Rewrite the legend labels to human-ify the basin
+    basin_labels_list = list(basin_labels.values())
+    for text, label in zip(legend.get_texts(), basin_labels_list):
         text.set_text(label)
 
     return
