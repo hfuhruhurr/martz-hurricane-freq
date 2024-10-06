@@ -90,9 +90,9 @@ def make_chart(df):
     footer_text_2 = 'https://tropical.atmos.colostate.edu/Realtime/' 
     footer_text_3 = 'Chart: Chris Martz'
 
-    fig.text(0.13, 0.06, footer_text_1, ha='left', va='bottom', fontsize=10, fontstyle='italic')
-    fig.text(0.13, 0.03, footer_text_2, ha='left', va='bottom', fontsize=9)
-    fig.text(0.13, 0.00, footer_text_3, ha='left', va='bottom', fontsize=9)
+    fig.text(0.12, 0.06, footer_text_1, ha='left', va='bottom', fontsize=10, style='oblique')
+    fig.text(0.12, 0.03, footer_text_2, ha='left', va='bottom', fontsize=9)
+    fig.text(0.12, 0.00, footer_text_3, ha='left', va='bottom', fontsize=9)
 
     # plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.14)  # won't add this space if nothing uses that space
     # plt.margins(x=0)
@@ -111,5 +111,7 @@ def make_chart(df):
     basin_labels_list = list(basin_labels.values())
     for text, label in zip(legend.get_texts(), basin_labels_list):
         text.set_text(label)
+
+    plt.show()
 
     return
