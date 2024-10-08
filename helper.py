@@ -1,6 +1,15 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
 import numpy as np
+import polars as pl
+from pathlib import Path
+import json
+import os
+# import altair as alt
+# import matplotlib.pyplot as plt
+# from matplotlib.ticker import MultipleLocator
+# import numpy as np
+
 
 basin_labels = {
     'northwestpacific': 'Northwest Pacific',
@@ -30,6 +39,86 @@ basin_colors = {
     'southpacific': '#638312',
     'northindian': '#cc9c09',
 }
+
+def process_one_basin(basin):
+    file_path = f'data/{basin}.json'
+
+    with open(file_path, 'r') as file:
+        # Read in json data (one file for each basin)
+        data = json.load(file)
+         
+        # Convert json data to a list of dicts (to facilitate to conversion to a dataframe)
+        records = [
+            {
+                'season': season,
+                'named_storms': values[0],
+                'named_storm_days': values[1],
+                'hurricanes': values[2],
+                'hurricane_days': values[3],
+                'major_hurricanes': values[4],
+                'major_hurricane_days': values[5],
+                'ace': values[6],
+            }
+            for season, values in data.items()
+        ]
+
+        # Make a dataframe from the list-o-dicts
+        df = (
+            pl.DataFrame(records)
+            .with_columns(
+                pl.lit(basin).alias('basin'),
+                pl.col('season').cast(pl.UInt16),
+            )
+        )
+
+        # Put 'basin' column first and scoot the rest to the right
+        cols = df.columns
+        cols = cols[-1:] + cols[:-1]
+
+    return df[cols]
+
+
+def combine_input_sources():
+    # Grab data from source .json files
+    data_dir = Path('data')
+    json_files = [file for file in data_dir.glob('*.json') if file.is_file()]
+
+    # Combine all basin's pertinent data into one dataframe
+    master_df = pl.DataFrame()
+
+    for file in json_files:
+        basin = file.stem
+        master_df = master_df.vstack(process_one_basin(basin))
+
+    return master_df
+
+
+def extract_chart_data(master_df, metric='major_hurricanes'):
+    allowable_basins = ['northwestpacific', 'northeastpacific', 'northatlantic', 'southindian', 'southpacific', 'northindian']
+
+    # Grab only the data needed for the chart
+    chart_df = (
+        master_df
+        .filter(
+            pl.col('season').is_between(1980, 2023),
+            pl.col('basin').is_in(allowable_basins)
+        )
+        .select(['basin', 'season', metric])
+    )
+
+    # Convert the long table to wide
+    wide = chart_df.pivot(on='season', values=metric)
+
+    # Write df to file if necessary
+    file_path = f'data/chart-source-{metric}.parquet'
+    if os.path.exists(file_path):
+        print('No action necessary.')
+    else:
+        wide.write_parquet(file_path)
+        print(f'Wrote chart-source-{metric}.parquet.')
+
+    return wide 
+
 
 def make_chart(df, metric='major_hurricanes'):
     # Set metric-specific chart options
