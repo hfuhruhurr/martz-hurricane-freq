@@ -31,7 +31,13 @@ basin_colors = {
     'northindian': '#cc9c09',
 }
 
-def make_chart(df):
+def make_chart(df, metric='major_hurricanes'):
+    # Set metric-specific chart options
+    metric_params = {
+        'hurricanes': {'chart_title': 'Hurricane', 'yaxis_max': 70},
+        'major_hurricanes': {'chart_title': 'Major Hurricane', 'yaxis_max': 40},
+    }
+
     # Set time window 
     years = [int(year) for year in df.columns[1:]] 
 
@@ -75,25 +81,26 @@ def make_chart(df):
 
     # Set min/max for x- and y-axis
     ax.set_xlim(1979, 2024)
-    ax.set_ylim(0, 40)
+    ax.set_ylim(0, metric_params[metric]['yaxis_max'])
 
     # Set the major and minor tick frequency
     ax.xaxis.set_major_locator(MultipleLocator(5))
     ax.xaxis.set_minor_locator(MultipleLocator(1))
     ax.tick_params(labelsize=9)
 
-    plt.title('Global Major Hurricane Frequency\n1980-2023', fontsize=12)
+    chart_title_metric = metric_params[metric]['chart_title']
+    plt.title(f'Global {chart_title_metric} Frequency (CSU data)\n1980-2023', fontsize=12)
     ax.set_ylabel('Number of Hurricanes', fontsize=10)
 
     # Add a footer
     footer_text_1 = 'Data source: Colorado State University (CSU) Department of Atmospheric Science'
     footer_text_2 = 'https://tropical.atmos.colostate.edu/Realtime/' 
-    footer_text_3 = 'Chart: Chris Martz'
+    footer_text_3 = 'Chart: Chris Martz, Reformatted: Doug Devine'
 
     fig.text(0.12, 0.06, footer_text_1, ha='left', va='bottom', fontsize=8, style='italic')
     fig.text(0.12, 0.03, footer_text_2, ha='left', va='bottom', fontsize=8, style='italic')
     fig.text(0.12, 0.00, footer_text_3, ha='left', va='bottom', fontsize=8, style='italic', weight='bold')
-
+    
     # plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.14)  # won't add this space if nothing uses that space
     # plt.margins(x=0)
     plt.subplots_adjust(bottom=0.14) 

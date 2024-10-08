@@ -1,11 +1,11 @@
 ### Data Source
-There are 9 data files.  One for each `region`.  
+There are 9 data files.  One for each `basin`.  
 
-The source data for each file can be found at the url: https://tropical.atmos.colostate.edu/Realtime/index.php?arch&loc= `region`
+The source data for each file can be found at the url: https://tropical.atmos.colostate.edu/Realtime/index.php?arch&loc= `basin`
 
-The source data is stored locally in `<region>.json`.
+The source data is stored locally in `<basin>.json`.
 
-The 9 `region`s:
+The 9 `basin`s:
 1. global
 2. northatlantic
 3. northeastpacific
@@ -21,7 +21,7 @@ The 9 `region`s:
 Each of the 9 databases have the same layout. (F yeah!)
 
 From left to right, the columns are:
-* calendar year of the data
+* season (not calendar year) of the data
 * \# of named storms
 * \# of named storm days
 * \# of hurricanes/typhoons
