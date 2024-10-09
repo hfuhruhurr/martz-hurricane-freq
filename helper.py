@@ -10,8 +10,9 @@ import os
 # from matplotlib.ticker import MultipleLocator
 # import numpy as np
 
-
-basin_labels = {
+ALLOWABLE_BASINS = ['northwestpacific', 'northeastpacific', 'northatlantic', 'southindian', 'southpacific', 'northindian']
+    
+BASIN_LABELS = {
     'northwestpacific': 'Northwest Pacific',
     'northeastpacific': 'Northeast Pacific',
     'northatlantic': 'North Atlantic',
@@ -21,7 +22,7 @@ basin_labels = {
 }
 
 # from bottom to top, how Chris stacked his bars
-basin_sort_order = [
+BASIN_SORT_ORDER = [
     'northwestpacific',
     'northeastpacific',
     'northatlantic',
@@ -31,7 +32,7 @@ basin_sort_order = [
 ]
 
 # Discovered from Mac's builtin Digital Color Meter app which has a color picker
-basin_colors = {
+BASIN_COLORS = {
     'northwestpacific': '#15027d',
     'northeastpacific': '#4677a3',
     'northatlantic': '#34aa9f',
@@ -94,14 +95,12 @@ def combine_input_sources():
 
 
 def extract_chart_data(master_df, metric='major_hurricanes'):
-    allowable_basins = ['northwestpacific', 'northeastpacific', 'northatlantic', 'southindian', 'southpacific', 'northindian']
-
     # Grab only the data needed for the chart
     chart_df = (
         master_df
         .filter(
             pl.col('season').is_between(1980, 2023),
-            pl.col('basin').is_in(allowable_basins)
+            pl.col('basin').is_in(ALLOWABLE_BASINS)
         )
         .select(['basin', 'season', metric])
     )
@@ -157,14 +156,14 @@ def make_chart(df, metric='major_hurricanes'):
     bar_width = 0.8
     stack_bottoms = np.zeros(n_stacks)
     
-    for basin in basin_sort_order:
+    for basin in BASIN_SORT_ORDER:
         p = ax.bar(
             years,
             basin_hurricanes[basin],
             width=bar_width,
             label=basin,
             bottom=stack_bottoms,
-            color=basin_colors[basin]
+            color=BASIN_COLORS[basin]
         )
         stack_bottoms += basin_hurricanes[basin]
 
@@ -204,7 +203,7 @@ def make_chart(df, metric='major_hurricanes'):
     )
 
     # Rewrite the legend labels to human-ify the basin
-    basin_labels_list = list(basin_labels.values())
+    basin_labels_list = list(BASIN_LABELS.values())
     for text, label in zip(legend.get_texts(), basin_labels_list):
         text.set_text(label)
 
